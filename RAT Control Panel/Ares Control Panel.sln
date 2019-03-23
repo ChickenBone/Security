@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAT", "RAT\RAT.csproj", "{8D418CBF-AFAB-42B8-81E1-5541684A08FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ares Control Panel", "RAT Control Panel\Ares Control Panel.csproj", "{C3EAC995-1165-47BF-888C-3FB62DF61F86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8D418CBF-AFAB-42B8-81E1-5541684A08FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D418CBF-AFAB-42B8-81E1-5541684A08FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D418CBF-AFAB-42B8-81E1-5541684A08FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D418CBF-AFAB-42B8-81E1-5541684A08FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3EAC995-1165-47BF-888C-3FB62DF61F86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3EAC995-1165-47BF-888C-3FB62DF61F86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3EAC995-1165-47BF-888C-3FB62DF61F86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3EAC995-1165-47BF-888C-3FB62DF61F86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {D13B86BF-EBFF-4728-80F8-88A495AA2912}
+		SolutionGuid = {5F85DB64-BAE8-40C3-AD2F-EFB2BF8A66FB}
 	EndGlobalSection
 EndGlobal
