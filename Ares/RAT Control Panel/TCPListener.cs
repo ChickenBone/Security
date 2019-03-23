@@ -40,7 +40,6 @@ public class AsynchronousSocketListener
             while (true)
             {
                 allDone.Reset();
-                Console.WriteLine("Waiting for a connection...");
                 listener.BeginAccept(
                     new AsyncCallback(AcceptCallback),
                     listener);
@@ -68,28 +67,37 @@ public class AsynchronousSocketListener
 
     public static void ReadCallback(IAsyncResult ar)
     {
-        String content = String.Empty;
-        StateObject state = (StateObject)ar.AsyncState;
-        Socket handler = state.workSocket;
-        int bytesRead = handler.EndReceive(ar);
-
-        if (bytesRead > 0)
+        try
         {
-            state.sb.Append(Encoding.ASCII.GetString(
-                state.buffer, 0, bytesRead));
-            content = state.sb.ToString();
-            if (content.IndexOf("<EOF>") > -1)
+            String content = String.Empty;
+            StateObject state = (StateObject)ar.AsyncState;
+            Socket handler = state.workSocket;
+            int bytesRead = handler.EndReceive(ar);
+
+            if (bytesRead > 0)
             {
-                Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                    content.Length, content);
-                Ares.TCPInterpreter.main(content);
-                Send(handler, content);
+                state.sb.Append(Encoding.ASCII.GetString(
+                    state.buffer, 0, bytesRead));
+                content = state.sb.ToString();
+                if (content.IndexOf("<EOF>") > -1)
+                {
+                    Ares.Form1 form = new Ares.Form1();
+                    Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
+                        content.Length, content);
+                    Ares.TCPInterpreter.main(content);
+                    Send(handler, content);
+                }
+                else
+                {
+                    handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                    new AsyncCallback(ReadCallback), state);
+                }
+
             }
-            else
-            {
-                handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                new AsyncCallback(ReadCallback), state);
-            }
+        }
+        catch
+        {
+            
         }
     }
 
@@ -106,7 +114,6 @@ public class AsynchronousSocketListener
         {
             Socket handler = (Socket)ar.AsyncState;
             int bytesSent = handler.EndSend(ar);
-            Console.WriteLine("Sent {0} bytes to client.", bytesSent);
 
             handler.Shutdown(SocketShutdown.Both);
             handler.Close();
