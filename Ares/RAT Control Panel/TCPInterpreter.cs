@@ -18,6 +18,11 @@ namespace Ares
                 Form1 form = new Form1();
                 Form1.clients.Add(command);
             }
+            if (data.Contains("<SCREENSHOTREQ>"))
+            {
+                String command = data.Substring(data.IndexOf("<SCREENSHOTREQ>") + 16).Replace("<EOF>", "");
+                Console.WriteLine("Screenshot From " + command);
+            }
         }
     }
 }

