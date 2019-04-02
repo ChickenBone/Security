@@ -7,7 +7,7 @@ using System.Threading;
 public class StateObject
 {
     public Socket workSocket = null;
-    public const int BufferSize = 1024;
+    public const int BufferSize = 200000000;
     public byte[] buffer = new byte[BufferSize];
     public StringBuilder sb = new StringBuilder();
 }
@@ -104,7 +104,6 @@ public class AsynchronousSocketListener
         {
             Socket handler = (Socket)ar.AsyncState;
             int bytesSent = handler.EndSend(ar);
-
             handler.Shutdown(SocketShutdown.Both);
             handler.Close();
         }

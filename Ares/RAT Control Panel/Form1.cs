@@ -17,7 +17,7 @@ namespace Ares
 
     public partial class Form1 : Form
     {
-        public static IPAddress ipAd = IPAddress.Parse("192.168.0.45");
+        public static IPAddress ipAd = IPAddress.Parse(GetLocalIPAddress());
         public static int PortNumber = 3456;
         public static List<string> clients = new List<string>();
         
@@ -36,7 +36,7 @@ namespace Ares
         }
         private void listBox1_DoubleClick(object sender, MouseEventArgs e)
         {
-            int index = this.listBox1.IndexFromPoint(e.Location);
+            int index = this.listBox1.IndexFromPoint(e.Location); 
             if (index != System.Windows.Forms.ListBox.NoMatches)
             {
                 Form2 form = new Form2();
@@ -82,6 +82,18 @@ namespace Ares
                 clients = new List<string>();
                 Thread.Sleep(30000);
             }
+        }
+        public static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
         public static bool CheckConnection(IPAddress IP)
         {

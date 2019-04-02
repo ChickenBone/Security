@@ -67,17 +67,16 @@ namespace Ares
         {
             while (true)
             {
-                Ares.UDPHeartBeat c = new UDPHeartBeat();
-                c.Send("<SERVERIP> " + Form1.ipAd.ToString());
-                c.Send("<SERVERPORT> " + Form1.PortNumber.ToString());
-
+                UDPHeartBeat.Send("<SERVERIP> " + Form1.ipAd.ToString());
+                UDPHeartBeat.Send("<SERVERPORT> " + Form1.PortNumber.ToString());
                 Thread.Sleep(10000);
             }
         }
-        public void Send(String text)
+        public static void Send(String text, IPAddress IpAddress = null)
         {
+            IpAddress = IpAddress == null ? IPAddress.Broadcast : IpAddress;
             UdpClient client = new UdpClient();
-            IPEndPoint ip = new IPEndPoint(IPAddress.Broadcast, 9732);
+            IPEndPoint ip = new IPEndPoint(IpAddress, 9732);
             byte[] bytes = Encoding.ASCII.GetBytes(Crypto.Encrypt(text));
             client.Send(bytes, bytes.Length, ip);
             client.Close();

