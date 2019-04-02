@@ -81,6 +81,7 @@
     <Compile Include="TCPServer.cs" />
     <Compile Include="UDPListener.cs" />
     <Compile Include="Updater.cs" />
+    <Compile Include="Useless Obstruction Code.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
