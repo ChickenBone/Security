@@ -81,15 +81,10 @@
     <Compile Include="TCPServer.cs" />
     <Compile Include="UDPListener.cs" />
     <Compile Include="Updater.cs" />
-    <Compile Include="Useless Obstruction Code.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="hestiaicon.ico" />
-    <Content Include="main.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

